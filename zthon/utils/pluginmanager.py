@@ -1,3 +1,4 @@
+import contextlib
 import importlib
 import sys
 from pathlib import Path
@@ -13,7 +14,7 @@ from ..helpers.tools import media_type
 from ..helpers.utils import _zedtools, _zedutils, _format, install_pip, reply_id
 from .decorators import admin_cmd, sudo_cmd
 
-LOGS = logging.getLogger("𝐑𝐞𝐩𝐭𝐡𝐨𝐧")
+LOGS = logging.getLogger("𓆩𝐑𝐞𝐩𝐭𝐡𝐨𝐧𓆪")
 
 
 def load_module(shortname, plugin_path=None):
@@ -76,12 +77,10 @@ def remove_plugin(shortname):
         return True
     except Exception as e:
         LOGS.error(e)
-    try:
+    with contextlib.suppress(BaseException):
         for i in LOAD_PLUG[shortname]:
             zedub.remove_event_handler(i)
         del LOAD_PLUG[shortname]
-    except BaseException:
-        pass
     try:
         name = f"zthon.plugins.{shortname}"
         for i in reversed(range(len(zedub._event_builders))):

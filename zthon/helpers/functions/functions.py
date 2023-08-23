@@ -1,4 +1,4 @@
-import json
+import asyncio
 import os
 import zipfile
 from random import choice
@@ -7,9 +7,10 @@ from uuid import uuid4
 
 import requests
 from googletrans import Translator
+from PIL import Image, ImageOps
+from telethon import functions, types
 
 from ..utils.extdl import install_pip
-from ..utils.utils import runcmd
 
 try:
     from imdb import IMDb
@@ -17,14 +18,17 @@ except ModuleNotFoundError:
     install_pip("IMDbPY")
     from imdb import IMDb
 
+from html_telegraph_poster import TelegraphPoster
 from PIL import Image, ImageColor, ImageDraw, ImageFont, ImageOps
 from telethon.errors.rpcerrorlist import YouBlockedUserError
 from telethon.tl.functions.contacts import UnblockRequest as unblock
 
 from ...Config import Config
+from ...core.logger import logging
 from ...sql_helper.globals import gvarstatus
 from ..resources.states import states
 
+LOGS = logging.getLogger(__name__)
 imdb = IMDb()
 
 mov_titles = [
@@ -91,6 +95,23 @@ async def covidindia(state):
     return next((req[states.index(i)] for i in states if i == state), None)
 
 
+async def post_to_telegraph(
+    page_title,
+    html_format_content,
+    auth_name="Zed-Thon",
+    auth_url="https://t.me/ZThon",
+):
+    post_client = TelegraphPoster(use_api=True)
+    post_client.create_api_token(auth_name)
+    post_page = post_client.post(
+        title=page_title,
+        author=auth_name,
+        author_url=auth_url,
+        text=html_format_content,
+    )
+    return post_page["url"]
+
+
 # --------------------------------------------------------------------------------------------------------------------#
 
 
@@ -107,27 +128,20 @@ async def age_verification(event, reply_to_id):
     return True
 
 
-async def fileinfo(file):
-    x, y, z, s = await runcmd(f"mediainfo '{file}' --Output=JSON")
-    zed_json = json.loads(x)["media"]["track"]
-    dic = {
-        "path": file,
-        "size": int(zed_json[0]["FileSize"]),
-        "extension": zed_json[0]["FileExtension"],
-    }
+async def unsavegif(event, sandy):
     try:
-        if "VideoCount" or "AudioCount" or "ImageCount" in zed_json[0]:
-            dic["format"] = zed_json[0]["Format"]
-            dic["type"] = zed_json[1]["@type"]
-            if "ImageCount" not in zed_json[0]:
-                dic["duration"] = int(float(zed_json[0]["Duration"]))
-                dic["bitrate"] = int(int(zed_json[0]["OverallBitRate"]) / 1000)
-            if "VideoCount" or "ImageCount" in zed_json[0]:
-                dic["height"] = int(zed_json[1]["Height"])
-                dic["width"] = int(zed_json[1]["Width"])
-    except (IndexError, KeyError):
-        pass
-    return dic
+        await event.client(
+            functions.messages.SaveGifRequest(
+                id=types.InputDocument(
+                    id=sandy.media.document.id,
+                    access_hash=sandy.media.document.access_hash,
+                    file_reference=sandy.media.document.file_reference,
+                ),
+                unsave=True,
+            )
+        )
+    except Exception as e:
+        LOGS.info(str(e))
 
 
 async def animator(media, mainevent, textevent=None):
@@ -148,6 +162,7 @@ async def animator(media, mainevent, textevent=None):
     return "animate.webm"
 
 
+
 # --------------------------------------------------------------------------------------------------------------------#
 
 
@@ -160,7 +175,7 @@ async def clippy(borg, msg, chat_id, reply_to_id):
         try:
             msg = await conv.send_file(msg)
         except YouBlockedUserError:
-            await zedub(unblock("clippy"))
+            await borg(unblock("clippy"))
             msg = await conv.send_file(msg)
         pic = await conv.get_response()
         await borg.send_read_acknowledge(conv.chat_id)
@@ -174,15 +189,15 @@ async def clippy(borg, msg, chat_id, reply_to_id):
 
 async def hide_inlinebot(borg, bot_name, text, chat_id, reply_to_id, c_lick=0):
     sticcers = await borg.inline_query(bot_name, f"{text}.")
-    zed = await sticcers[c_lick].click("me", hide_via=True)
-    if zed:
-        await borg.send_file(int(chat_id), zed, reply_to=reply_to_id)
-        await zed.delete()
+    cat = await sticcers[c_lick].click("me", hide_via=True)
+    if cat:
+        await borg.send_file(int(chat_id), cat, reply_to=reply_to_id)
+        await cat.delete()
 
 
 async def make_inline(text, borg, chat_id, reply_to_id):
-    zedinput = f"Inline buttons {text}"
-    results = await borg.inline_query(Config.TG_BOT_USERNAME, zedinput)
+    catinput = f"Inline buttons {text}"
+    results = await borg.inline_query(Config.TG_BOT_USERNAME, catinput)
     await results[0].click(chat_id, reply_to=reply_to_id)
 
 
@@ -205,6 +220,11 @@ def sublists(input_list: list, width: int = 3):
     return [input_list[x : x + width] for x in range(0, len(input_list), width)]
 
 
+# split string into fixed length substrings
+def chunkstring(string, length):
+    return (string[0 + i : length + i] for i in range(0, len(string), length))
+
+
 # unziping file
 async def unzip(downloaded_file_name):
     with zipfile.ZipFile(downloaded_file_name, "r") as zip_ref:
@@ -222,7 +242,7 @@ async def getTranslate(text, **kwargs):
             result = translator.translate(text, **kwargs)
         except Exception:
             translator = Translator()
-            await sleep(0.1)
+            await asyncio.sleep(0.1)
     return result
 
 
@@ -256,8 +276,7 @@ def ellipse_create(filename, size, border):
 
 def ellipse_layout_create(filename, size, border):
     x, mask = ellipse_create(filename, size, border)
-    img = ImageOps.expand(mask)
-    return img
+    return ImageOps.expand(mask)
 
 
 def text_draw(font_name, font_size, img, text, hight, stroke_width=0, stroke_fill=None):
@@ -294,7 +313,7 @@ def higlighted_text(
     direction=None,
     font_name=None,
     album_limit=None,
-):
+):  # sourcery skip: low-code-quality
     templait = Image.open(input_img)
     # resize image
     raw_width, raw_height = templait.size
@@ -304,7 +323,7 @@ def higlighted_text(
         else (int(1024 * raw_width / raw_height), 1024)
     )
     if font_name is None:
-        font_name = "zthon/helpers/styles/impact.ttf"
+        font_name = "Zara/helpers/styles/impact.ttf"
     font = ImageFont.truetype(font_name, font_size)
     extra_width, extra_height = position
     # get text size
@@ -320,8 +339,7 @@ def higlighted_text(
     for item in raw_text:
         input_text = "\n".join(wrap(item, int((40.0 / resized_width) * mask_size)))
         split_text = input_text.splitlines()
-        for final in split_text:
-            list_text.append(final)
+        list_text.extend(iter(split_text))
     texts = [list_text]
     if album and len(list_text) > lines:
         texts = [list_text[i : i + lines] for i in range(0, len(list_text), lines)]
@@ -401,7 +419,7 @@ def higlighted_text(
             )
             source_img = Image.alpha_composite(source_img, trans)
             output_text.append(list_text[i])
-        output_img = f"./temp/zed{pic_no}.jpg"
+        output_img = f"./temp/cat{pic_no}.jpg"
         output.append(output_img)
         source_img.save(output_img, "png")
         if album_limit and (album_limit - 1) == pic_no:
@@ -451,7 +469,7 @@ async def waifutxt(text, chat_id, reply_to_id, bot):
         63,
     ]
     sticcers = await bot.inline_query("stickerizerbot", f"#{choice(animus)}{text}")
-    zed = await sticcers[0].click("me", hide_via=True)
-    if zed:
-        await bot.send_file(int(chat_id), zed, reply_to=reply_to_id)
-        await zed.delete()
+    cat = await sticcers[0].click("me", hide_via=True)
+    if cat:
+        await bot.send_file(int(chat_id), cat, reply_to=reply_to_id)
+        await cat.delete()

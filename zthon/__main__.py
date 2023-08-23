@@ -18,7 +18,7 @@ print(f"المرخصة بموجب شروط  {zthon.__license__}")
 cmdhr = Config.COMMAND_HAND_LER
 
 try:
-    LOGS.info("⌭ بـدء تنزيـل زدثــون ⌭")
+    LOGS.info("⌭ بـدء تنزيـل ريبـــثون ⌭")
     zedub.loop.run_until_complete(setup_bot())
     LOGS.info("⌭ بـدء تشغيـل البـوت ⌭")
 except Exception as e:

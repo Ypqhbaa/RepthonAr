@@ -4,10 +4,10 @@ import urllib.request
 from collections import defaultdict
 
 import ujson
-import yt_dlp
+import youtube_dl
 from telethon import Button
+from youtube_dl.utils import DownloadError, ExtractorError, GeoRestrictedError
 from youtubesearchpython import VideosSearch
-from yt_dlp.utils import DownloadError, ExtractorError, GeoRestrictedError
 
 from ...Config import Config
 from ...core import pool
@@ -23,12 +23,11 @@ YOUTUBE_REGEX = re.compile(
 )
 PATH = "./zthon/cache/ytsearch.json"
 
-song_dl = "yt-dlp --force-ipv4 --write-thumbnail --add-metadata --embed-thumbnail -o './temp/%(title)s.%(ext)s' --extract-audio --audio-format mp3 --audio-quality {QUALITY} {video_link}"
-
-thumb_dl = "yt-dlp --force-ipv4 -o './temp/%(title)s.%(ext)s' --write-thumbnail --skip-download {video_link}"
-video_dl = "yt-dlp --force-ipv4 --write-thumbnail --add-metadata --embed-thumbnail -o './temp/%(title)s.%(ext)s' -f 'best[height<=480]' {video_link}"
+song_dl = "youtube-dl --force-ipv4 --write-thumbnail --add-metadata --embed-thumbnail -o './temp/%(title)s.%(ext)s' --extract-audio --audio-format mp3 --audio-quality {QUALITY} {video_link}"
+thumb_dl = "youtube-dl --force-ipv4 -o './temp/%(title)s.%(ext)s' --write-thumbnail --skip-download {video_link}"
+video_dl = "youtube-dl --force-ipv4 --write-thumbnail  --add-metadata --embed-thumbnail -o './temp/%(title)s.%(ext)s' -f '[filesize<20M]' {video_link}"
 name_dl = (
-    "yt-dlp --force-ipv4 --get-filename -o './temp/%(title)s.%(ext)s' {video_link}"
+    "youtube-dl --force-ipv4 --get-filename -o './temp/%(title)s.%(ext)s' {video_link}"
 )
 
 
@@ -44,7 +43,7 @@ async def yt_search(zed):
         k = 0
         for i in user_data:
             if user_data:
-                video_link.append("https://www.youtube.com/watch?v=" + user_data[k])
+                video_link.append(f"https://www.youtube.com/watch?v={user_data[k]}")
             k += 1
             if k > 3:
                 break
@@ -61,10 +60,10 @@ async def ytsearch(query, limit):
     for v in videolinks.result()["result"]:
         textresult = f"[{v['title']}](https://www.youtube.com/watch?v={v['id']})\n"
         try:
-            textresult += f"**Description : **`{v['descriptionSnippet'][-1]['text']}`\n"
+            textresult += f"**- الوصـف : **`{v['descriptionSnippet'][-1]['text']}`\n"
         except Exception:
-            textresult += "**Description : **`None`\n"
-        textresult += f"**Duration : **__{v['duration']}__  **Views : **__{v['viewCount']['short']}__\n"
+            textresult += "**- الوصـف : **`None`\n"
+        textresult += f"**- المـده : **{v['duration']}  **- المشـاهـدات : **{v['viewCount']['short']}\n"
         result += f"☞ {textresult}\n"
     return result
 
@@ -88,17 +87,15 @@ class YT_Search_X:
 
 ytsearch_data = YT_Search_X()
 
-"""
 async def yt_data(zed):
     params = {"format": "json", "url": zed}
     url = "https://www.youtube.com/oembed"  # https://stackoverflow.com/questions/29069444/returning-the-urls-as-a-list-from-a-youtube-search-query
     query_string = urllib.parse.urlencode(params)
-    url = f"{url}?{query_string}"
+    url = url + "?" + query_string
     with urllib.request.urlopen(url) as response:
         response_text = response.read()
         data = ujson.loads(response_text.decode())
     return data
-"""
 
 
 async def get_ytthumb(videoid: str):
@@ -129,19 +126,19 @@ def get_choice_by_id(choice_id, media_type: str):
         # default format selection
         choice_str = "bestvideo+bestaudio/best"
         disp_str = "best(video+audio)"
-    elif choice_id == "mp3":
-        choice_str = "320"
-        disp_str = "320 Kbps"
     elif choice_id == "mp4":
         # Download best Webm / Mp4 format available or any other best if no mp4
         # available
         choice_str = "bestvideo[ext=webm]+251/bestvideo[ext=mp4]+(258/256/140/bestaudio[ext=m4a])/bestvideo[ext=webm]+(250/249)/best"
         disp_str = "best(video+audio)[webm/mp4]"
+    elif choice_id == "mp3":
+        choice_str = "320"
+        disp_str = "320 Kbps"
     else:
         disp_str = str(choice_id)
         if media_type == "v":
             # mp4 video quality + best compatible audio
-            choice_str = f"{disp_str}+(258/256/140/bestaudio[ext=m4a])/best"
+            choice_str = disp_str + "+(258/256/140/bestaudio[ext=m4a])/best"
         else:  # Audio
             choice_str = disp_str
     return choice_str, disp_str
@@ -159,12 +156,12 @@ async def result_formatter(results: list):
             out += "<code>{}</code>\n\n".format(
                 "".join(x.get("text") for x in r.get("descriptionSnippet"))
             )
-        out += f'<b>❯  Duration:</b> {r.get("accessibility").get("duration")}\n'
-        views = f'<b>❯  Views:</b> {r.get("viewCount").get("short")}\n'
+        out += f'<b>❯  المـده :</b> {r.get("accessibility").get("duration")}\n'
+        views = f'<b>❯  المشـاهـدات :</b> {r.get("viewCount").get("short")}\n'
         out += views
-        out += f'<b>❯  Upload date:</b> {r.get("publishedTime")}\n'
+        out += f'<b>❯  تاريـخ الرفـع :</b> {r.get("publishedTime")}\n'
         if upld:
-            out += "<b>❯  Uploader:</b> "
+            out += "<b>❯  القنـاة :</b> "
             out += f'<a href={upld.get("link")}>{upld.get("name")}</a>'
 
         output[index] = dict(
@@ -183,7 +180,7 @@ def yt_search_btns(
     buttons = [
         [
             Button.inline(
-                text="⬅️  Back",
+                text="رجـوع ⬅️",
                 data=f"ytdl_back_{data_key}_{page}",
             ),
             Button.inline(
@@ -193,11 +190,11 @@ def yt_search_btns(
         ],
         [
             Button.inline(
-                text="📜  List all",
+                text="عرض الكل 📜",
                 data=f"ytdl_listall_{data_key}_{page}",
             ),
             Button.inline(
-                text="⬇️  Download",
+                text="⬇️ تحميـل",
                 data=f"ytdl_download_{vid}_0",
             ),
         ],
@@ -209,17 +206,18 @@ def yt_search_btns(
 
 @pool.run_in_thread
 def download_button(vid: str, body: bool = False):  # sourcery no-metrics
+    # sourcery skip: low-code-quality
     try:
-        vid_data = yt_dlp.YoutubeDL({"no-playlist": True}).extract_info(
+        vid_data = youtube_dl.YoutubeDL({"no-playlist": True}).extract_info(
             BASE_YT_URL + vid, download=False
         )
     except ExtractorError:
         vid_data = {"formats": []}
     buttons = [
         [
-            Button.inline("⭐️ BEST - 📹 MKV", data=f"ytdl_download_{vid}_mkv_v"),
+            Button.inline("⭐️ اعلى دقـه - 📹 MKV", data=f"ytdl_download_{vid}_mkv_v"),
             Button.inline(
-                "⭐️ BEST - 📹 WebM/MP4",
+                "⭐️ اعلى دقـه - 📹 WebM/MP4",
                 data=f"ytdl_download_{vid}_mp4_v",
             ),
         ]
@@ -230,20 +228,20 @@ def download_button(vid: str, body: bool = False):  # sourcery no-metrics
     audio_dict = {}
     # ------------------------------------------------ #
     for video in vid_data["formats"]:
-        if video.get("filesize"):
-            fr_note = video.get("format_note")
-            fr_id = int(video.get("format_id"))
-            fr_size = video.get("filesize")
-            if video.get("ext") == "mp4":
-                for frmt_ in qual_list:
-                    if fr_note in (frmt_, f"{frmt_}60"):
-                        qual_dict[frmt_][fr_id] = fr_size
-            if video.get("acodec") != "none":
-                bitrrate = int(video.get("abr", 0))
-                if bitrrate != 0:
-                    audio_dict[
-                        bitrrate
-                    ] = f"🎵 {bitrrate}Kbps ({humanbytes(fr_size) or 'N/A'})"
+
+        fr_note = video.get("format_note")
+        fr_id = int(video.get("format_id"))
+        fr_size = video.get("filesize")
+        if video.get("ext") == "mp4":
+            for frmt_ in qual_list:
+                if fr_note in (frmt_, frmt_ + "60"):
+                    qual_dict[frmt_][fr_id] = fr_size
+        if video.get("acodec") != "none":
+            bitrrate = int(video.get("abr", 0))
+            if bitrrate != 0:
+                audio_dict[
+                    bitrrate
+                ] = f"🎵 {bitrrate}Kbps ({humanbytes(fr_size) or 'N/A'})"
 
     video_btns = []
     for frmt in qual_list:
@@ -259,7 +257,7 @@ def download_button(vid: str, body: bool = False):  # sourcery no-metrics
             )
     buttons += sublists(video_btns, width=2)
     buttons += [
-        [Button.inline("⭐️ BEST - 🎵 320Kbps - MP3", data=f"ytdl_download_{vid}_mp3_a")]
+        [Button.inline("⭐️ اعلى دقـه - 🎵 320Kbps - MP3", data=f"ytdl_download_{vid}_mp3_a")]
     ]
     buttons += sublists(
         [
@@ -295,14 +293,12 @@ def _tubeDl(url: str, starttime, uid: str):
         "quiet": True,
     }
     try:
-        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             x = ydl.download([url])
     except DownloadError as e:
         LOGS.error(e)
     except GeoRestrictedError:
-        LOGS.error(
-            "ERROR: The uploader has not made this video available in your country"
-        )
+        LOGS.error("هذا الفيديو غير متاح  في بلدك")
     else:
         return x
 
@@ -329,7 +325,7 @@ def _mp3Dl(url: str, starttime, uid: str):
         "quiet": True,
     }
     try:
-        with yt_dlp.YoutubeDL(_opts) as ytdl:
+        with youtube_dl.YoutubeDL(_opts) as ytdl:
             dloader = ytdl.download([url])
     except Exception as y_e:
         LOGS.exception(y_e)

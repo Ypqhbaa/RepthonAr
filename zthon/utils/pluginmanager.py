@@ -1,4 +1,3 @@
-import contextlib
 import importlib
 import sys
 from pathlib import Path
@@ -77,10 +76,12 @@ def remove_plugin(shortname):
         return True
     except Exception as e:
         LOGS.error(e)
-    with contextlib.suppress(BaseException):
+    try:
         for i in LOAD_PLUG[shortname]:
             zedub.remove_event_handler(i)
         del LOAD_PLUG[shortname]
+    except BaseException:
+        pass
     try:
         name = f"zthon.plugins.{shortname}"
         for i in reversed(range(len(zedub._event_builders))):

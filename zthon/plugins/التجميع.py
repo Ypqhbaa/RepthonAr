@@ -1,25 +1,33 @@
 import requests
 import asyncio
+import time
+import re
 from telethon import events
 from telethon.errors import FloodWaitError
 from telethon.tl.functions.messages import GetHistoryRequest
 from telethon.tl.functions.channels import JoinChannelRequest
 from telethon.tl.functions.messages import ImportChatInviteRequest
+from telethon.tl.functions.users import GetFullUserRequest
 
 from zthon import zedub
 from ..Config import Config
 from ..core.managers import edit_delete, edit_or_reply
-from ..sql_helper.globals import gvarstatus
+from ..sql_helper.globals import addgvar, delgvar, gvarstatus
 from ..helpers.utils import reply_id
-
+estithmar = False
+ratp = False
+thifts = False
+bahsees = False
 
 ZelzalCoins_cmd = (
     "[ᯓ 𝗦𝗼𝘂𝗿𝗰𝗲 𝗥𝗲𝗽𝘁𝗵𝗼𝗻 - اوامـر تجميـع النقـاط](t.me/Repthon) 𓆪\n\n"
-    "**⎉╎قـائمـة اوامـر تجميـع نقـاط بوتـات تمـويـل الخاص بسـورس ريبـــثون 🦾 :** \n\n"
+    "**⎉╎قـائمـة اوامـر تجميـع نقـاط بوتـات تمـويـل الخاص بسـورس زدثـــون🦾 :** \n\n"
     "`.المليار`\n"
-    "**⪼ لـ تجميـع النقـاط مـن بـوت المليـار ( @EEObot ) .. تلقـائيـاً ✓**\n\n"
+    "**⪼ لـ تجميـع النقـاط مـن بـوت المليـار ( @EEOBot ) .. تلقـائيـاً ✓**\n\n"
     "`.العرب`\n"
     "**⪼ لـ تجميـع النقـاط مـن بـوت العـرب ( @xnsex21bot ) .. تلقـائيـاً ✓**\n\n"
+    "`.دعمكم`\n"
+    "**⪼ لـ تجميـع النقـاط مـن بـوت دعمكـم ( @DamKombot ) .. تلقـائيـاً ✓**\n\n"
     "`.الجوكر`\n"
     "**⪼ لـ تجميـع النقـاط مـن بـوت الجوكـر ( @A_MAN9300BOT ) .. تلقـائيـاً ✓**\n\n"
     "`.الجنرال`\n"
@@ -30,6 +38,8 @@ ZelzalCoins_cmd = (
     "**⪼ لـ تجميـع النقـاط مـن بـوت سمـسـم ( @SMSMWAbot ) .. تلقـائيـاً ✓**\n\n\n"
     "`.تناهيد`\n"
     "**⪼ لـ تجميـع النقـاط مـن بـوت تناهيـد ( @Ncoe_bot ) .. تلقـائيـاً ✓**\n\n"
+    "`.دعمكم`\n"
+    "**⪼ لـ تجميـع النقـاط مـن بـوت دعـمـكم ( @DamDamKombot ) .. تلقـائيـاً ✓**\n\n"
     "`.المليار ايقاف`\n"
     "**⪼ لـ ايقـاف عمليـة تجميـع النقـاط من بوت المليـار ..**\n\n"
     "`.الجوكر ايقاف`\n"
@@ -44,6 +54,8 @@ ZelzalCoins_cmd = (
     "**⪼ لـ ايقـاف عمليـة تجميـع النقـاط من بوت سمـسـم ..**\n\n"
     "`.تناهيد ايقاف`\n"
     "**⪼ لـ ايقـاف عمليـة تجميـع النقـاط من بوت تناهيـد ..**\n\n\n"
+    "`.دعمكم ايقاف`\n"
+    "**⪼ لـ ايقـاف عملية تجميـع النقـاط مـن بـوت دعمكم ..**\n\n\n"
     "`.اضف بوت التجميع`\n"
     "**⪼ بالـرد ع معـرف البـوت الجديـد لـ اضافته لـ السـورس ..**\n\n"
     "`.تجميع`\n"
@@ -62,25 +74,25 @@ ZelzalCoins_cmd = (
     "**⪼ مثــال :**\n"
     "`.راتب وعد 50`\n\n\n"
     "**- مـلاحظــه :**\n"
-    "**⪼ سيتم اضـافـه المزيـد من البوتـات بالتحديثـات الجايـه .. اذا تريـد اضافـة بـوت محـدد راسـل مطـور السـورس @E_7_V**"
+    "**⪼ سيتم اضـافـه المزيـد من البوتـات بالتحديثـات الجايـه .. اذا تريـد اضافـة بـوت محـدد راسـل مطـور السـورس @zzzzl1l**"
 )
 
 @zedub.zed_cmd(pattern="بوت المليار$")
 async def _(event):
-    await event.edit('@EEObot')
+    await event.edit('@EEOBot')
 
 # Copyright (C) 2022 Zed-Thon . All Rights Reserved
 @zedub.zed_cmd(pattern="المليار(?: |$)(.*)")
 async def _(event):
     con = event.pattern_match.group(1).lower()
-    await event.edit("**⎉╎حسنـاً .. تأكـد من انك مشتـرك بـ قنـوات الاشتـراك الاجبـاري لتجنب الأخطـاء @zmmbot**")
-    channel_entity = await zedub.get_entity('@EEObot')
-    await zedub.send_message('@EEObot', '/start')
+    await event.edit("**⎉╎حسنـاً .. تأكـد من انك مشتـرك بـ قنـوات الاشتـراك الاجبـاري لتجنب الأخطـاء @EEOBot**")
+    channel_entity = await zedub.get_entity('@EEOBot')
+    await zedub.send_message('@EEOBot', '/start')
     await asyncio.sleep(3)
-    msg0 = await zedub.get_messages('@EEObot', limit=1)
+    msg0 = await zedub.get_messages('@EEOBot', limit=1)
     await msg0[0].click(2)
     await asyncio.sleep(3)
-    msg1 = await zedub.get_messages('@EEObot', limit=1)
+    msg1 = await zedub.get_messages('@EEOBot', limit=1)
     await msg1[0].click(0)
     chs = 1
     for i in range(100):
@@ -100,12 +112,12 @@ async def _(event):
             except:
                 bott = url.split('/')[-1]
                 await zedub(ImportChatInviteRequest(bott))
-            msg2 = await zedub.get_messages('@EEObot', limit=1)
+            msg2 = await zedub.get_messages('@EEOBot', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
-            msg2 = await zedub.get_messages('@EEObot', limit=1)
+            msg2 = await zedub.get_messages('@EEOBot', limit=1)
             await msg2[0].click(text='التالي')
             chs += 1
             await event.edit(f"**⎉╎القنـاة رقـم {chs} .. يمكـن تبنـدت**")
@@ -149,7 +161,7 @@ async def _(event):
             msg2 = await zedub.get_messages('@xnsex21bot', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages('@xnsex21bot', limit=1)
             await msg2[0].click(text='التالي')
@@ -205,7 +217,7 @@ async def _(event):
             msg2 = await zedub.get_messages(zpoint, limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages(zpoint, limit=1)
             await msg2[0].click(text='التالي')
@@ -252,7 +264,7 @@ async def _(event):
             msg2 = await zedub.get_messages('@A_MAN9300BOT', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages('@A_MAN9300BOT', limit=1)
             await msg2[0].click(text='التالي')
@@ -299,7 +311,7 @@ async def _(event):
             msg2 = await zedub.get_messages('@MARKTEBOT', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages('@MARKTEBOT', limit=1)
             await msg2[0].click(text='التالي')
@@ -346,7 +358,7 @@ async def _(event):
             msg2 = await zedub.get_messages('@qweqwe1919bot', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages('@qweqwe1919bot', limit=1)
             await msg2[0].click(text='التالي')
@@ -396,7 +408,7 @@ async def _(event):
             msg2 = await zedub.get_messages('@SMSMWAbot', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages('@SMSMWAbot', limit=1)
             await msg2[0].click(text='التالي')
@@ -443,7 +455,7 @@ async def _(event):
             msg2 = await zedub.get_messages('@Ncoe_bot', limit=1)
             await msg2[0].click(text='تحقق')
             chs += 1
-            await event.edit(f"**⎉╎تم بنجـاح الاشتـراك في {chs} قنـاة ...✓**")
+            await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
         except: #Code by T.me/zzzzl1l
             msg2 = await zedub.get_messages('@Ncoe_bot', limit=1)
             await msg2[0].click(text='التالي')
@@ -452,21 +464,126 @@ async def _(event):
     await zedub.send_message(event.chat_id, "**⎉╎تم الانتهـاء مـن تجميـع النقـاط .. حاول من جديد في وقت آخر ✓**")
 
 
+@zedub.zed_cmd(pattern="بوت دعمكم$")
+async def _(event):
+    await event.edit('@DamKombot')
+
+# Copyright (C) 20223 Zed-Thon . All Rights Reserved
+@zedub.zed_cmd(pattern="دعمكم(?: |$)(.*)")
+async def _(event):
+    con = event.pattern_match.group(1).lower()
+    await event.edit("**⎉╎حسنـاً .. تأكـد من انك مشتـرك بـ قنـوات الاشتـراك الاجبـاري لتجنب الأخطـاء @DamKombot**")
+    channel_entity = await zedub.get_entity('@DamKombot')
+    await zedub.send_message('@DamKombot', '/start')
+    await asyncio.sleep(3)
+    msg0 = await zedub.get_messages('@DamKombot', limit=1)
+    await msg0[0].click(1)
+    await asyncio.sleep(3)
+    msg1 = await zedub.get_messages('@DamKombot', limit=1)
+    await msg1[0].click(0)
+    chs = 1
+    for i in range(100):
+        await asyncio.sleep(3)
+        list = await zedub(GetHistoryRequest(peer=channel_entity, limit=1, offset_date=None, offset_id=0, max_id=0, min_id=0, add_offset=0, hash=0))
+        msgs = list.messages[0]
+        if msgs.message.find('**⎉╎لا يوجد قنوات في الوقت الحالي .. قم يتجميع النقاط بطريقه مختلفه**') != -1:
+            await zedub.send_message(event.chat_id, "**⎉╎مـافي قنـوات بالبـوت حاليـاً ...**")
+            break
+        if con == "ايقاف": #Code by T.me/zzzzl1l
+            await zedub.send_message(event.chat_id, "**⎉╎تم إيقـاف تجميـع النقـاط .. بنجـاح☑️**")
+            break
+        msg_text = msgs.message
+        if "اشترك فالقناة @" in msg_text:
+            the_channel = msg_text.split('@')[1].split()[0]
+            try:
+                entity = await zedub.get_entity(the_channel)
+                if entity:
+                    await zedub(JoinChannelRequest(entity.id))
+                    await asyncio.sleep(4)
+                    msg2 = await zedub.get_messages(bot_username6, limit=1)
+                    await msg2[0].click(text='اشتركت ✅')
+                    chs += 1
+                    await event.edit(f"**⎉╎تم الاشتـراك في القنـاة  {chs} ...✓**")
+            except:
+                await zedub.send_message(event.chat_id, f"**⎉╎خطـأ , يمكـن تبنـدت ؟!**")
+                break
+    await zedub.send_message(event.chat_id, "**⎉╎تم الانتهـاء مـن تجميـع النقـاط .. حاول من جديد في وقت آخر ✓**")
+
+
+
 # Code by @r0r77 & @Dar4k
-@zedub.zed_cmd(pattern="بخشيش وعد (.*)")
+@zedub.zed_cmd(pattern="بخشيش وعد(?:\s|$)([\s\S]*)")
 async def baqshis(event):
-    for i in range(int("".join(event.text.split(maxsplit=2)[2:]).split(" ", 2)[0])):
-        chat = event.chat_id
-        await zedub.send_message(chat, "بخشيش")
-        await asyncio.sleep(605)
+    global bahsees
+    await event.delete()
+    if not bahsees:
+        bahsees = True
+        if event.is_group:
+            await the_bahsees(event)
+        else:
+            await event.edit("**⎉╎ الامـر خاص بـ المجموعات فقـط ؟!**")
+async def the_bahsees(event):
+    await event.respond('بخشيش')
+    await asyncio.sleep(660)
+    global bahsees
+    if bahsees:
+        await the_bahsees(event)  
+@zedub.zed_cmd(pattern="ايقاف بخشيش وعد(?:\s|$)([\s\S]*)")
+async def baqshis(event):
+    global bahsees
+    bahsees = False
+    await event.edit("**⎉╎تم إيقـاف تجميـع البخشيش  .. بنجـاح ✓** ")
+
+@zedub.zed_cmd(pattern="سرقة وعد(?:\s|$)([\s\S]*)")
+async def thift(event):
+    global thifts
+    await event.delete()
+    if not thifts:
+        thifts = True
+        if event.is_group:
+            message = event.pattern_match.group(1).strip()
+            if message:
+                await send_message(event, message)
+            else:
+                await event.edit("**⎉╎قم بكتابة ايدي الشخص مع الامـر ؟!**")
+
+async def send_message(event, message):
+    await event.respond(f"زرف {message}")
+    await asyncio.sleep(660)
+    global thifts
+    if thifts:
+        await send_message(event, message)
+
+@zedub.zed_cmd(pattern="ايقاف سرقة وعد(?:\s|$)([\s\S]*)")
+async def Reda(event):
+    global thifts
+    thifts = False
+    await event.edit("**⎉╎تم إيقـاف السرقة  .. بنجـاح ✓**")
+client = zedub
 
 
-@zedub.zed_cmd(pattern="راتب وعد (.*)")
-async def ratb(event):
-    for i in range(int("".join(event.text.split(maxsplit=2)[2:]).split(" ", 2)[0])):
-        chat = event.chat_id
-        await zedub.send_message(chat, "راتب")
-        await asyncio.sleep(605)
+@zedub.zed_cmd(pattern="راتب وعد(?:\s|$)([\s\S]*)")
+async def thift(event):
+    global ratp
+    await event.delete()
+    if not ratp:
+        ratp = True
+        if event.is_group:
+            await the_ratp(event)
+        else:
+            await event.edit("**⎉╎ الامـر خاص بـ المجموعات فقـط ؟!**")
+
+async def the_ratp(event):
+    await event.respond('راتب')
+    await asyncio.sleep(660)
+    global ratp
+    if ratp:
+        await the_ratp(event)  
+@zedub.zed_cmd(pattern="ايقاف راتب وعد(?:\s|$)([\s\S]*)")
+async def thift(event):
+    global ratp
+    ratp = False
+    await event.edit("**تم تعطيل راتب وعد بنجاح ✅**")
 
 
 @zedub.zed_cmd(pattern="كلمات وعد (.*)")
@@ -486,25 +603,35 @@ async def waorwaad(event):
             await zedub.send_message(chat, msg)
 
 
-@zedub.zed_cmd(pattern="استثمار وعد (.*)")
+@zedub.zed_cmd(pattern="استثمار وعد")
 async def _(event):
-    await event.edit("**⎉╎تم تفعيل الاستثمـار لـ بوت وعد بنجـاح ✅**\n**⎉╎لـ إيقافـه ارسـل** \n`.استثمار وعد 1`")
-    for i in range(int("".join(event.text.split(maxsplit=2)[2:]).split(" ", 2)[0])):
-        chat = event.chat_id
-        await zedub.send_message(chat, "فلوسي")
-        await asyncio.sleep(0.5)
-        masg = await zedub.get_messages(chat, limit=1)
-        masg = masg[0].message
-        masg = ("".join(masg.split(maxsplit=2)[2:])).split(" ", 2)
-        msg = masg[0]
-        if int(msg) > 500000000:
-            await zedub.send_message(chat, f"استثمار {msg}")
-            await asyncio.sleep(10)
-            mssag2 = await zedub.get_messages(chat, limit=1)
-            await mssag2[0].click(text="اي ✅")
+    await event.delete()
+    global estithmar
+    estithmar = True
+    while estithmar:
+        if event.is_group:
+            await event.client.send_message(event.chat_id, "فلوسي")
+            await asyncio.sleep(3)
+            zzzthon = await event.client.get_messages(event.chat_id, limit=1)
+            zzzthon = zzzthon[0].message
+            zzzthon = ("".join(zzzthon.split(maxsplit=2)[2:])).split(" ", 2)
+            zedub = zzzthon[0]
+            if zedub.isdigit() and int(zedub) > 500000000:
+                await event.client.send_message(event.chat_id,f"استثمار {zedub}")
+                await asyncio.sleep(5)
+                zzthon = await event.client.get_messages(event.chat_id, limit=1)
+                await zzthon[0].click(text="اي ✅")
+            else:
+                await event.client.send_message(event.chat_id, f"استثمار {zedub}")
+            await asyncio.sleep(1210)
+        
         else:
-            await zedub.send_message(chat, f"استثمار {msg}")
-        await asyncio.sleep(1210)
+            await event.edit("**⎉╎امر الاستثمار يمكنك استعماله في المجموعات فقط 🖤**")
+@zedub.zed_cmd(pattern="ايقاف استثمار وعد")
+async def stop_wad(event):
+    global estithmar
+    estithmar = False
+    await event.edit("**⎉╎تم إيقـاف استثمار وعـد  .. بنجـاح ✓**")
 
 
 @zedub.zed_cmd(pattern="اوامر النقاط")

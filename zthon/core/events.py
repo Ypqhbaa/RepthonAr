@@ -62,7 +62,7 @@ class NewMessage(events.NewMessage):
                 is_admin = event.chat.admin_rights
 
             if not is_creator and not is_admin:
-                text = "`I need admin rights to be able to use this command!`"
+                text = "- لاستخدام هذا الامر تحتاج الى صلاحيات المشرف اولاً "
 
                 event._client.loop.create_task(edit_or_reply(event, text))
                 return
@@ -89,16 +89,15 @@ class MessageEdited(NewMessage):
 
 
 async def safe_check_text(msg):  # sourcery no-metrics
+    # sourcery skip: low-code-quality
     if not msg:
         return False
     msg = str(msg)
     from .session import zedub
 
-    phone = str((await zedub.get_entity(zedub.uid)).phone)
     return bool(
         (
             (Config.STRING_SESSION in msg)
-            or (phone[-10:] in msg)
             or (Config.API_HASH in msg)
             or (Config.TG_BOT_TOKEN in msg)
             or (Config.HEROKU_API_KEY and Config.HEROKU_API_KEY in msg)
@@ -115,7 +114,8 @@ async def safe_check_text(msg):  # sourcery no-metrics
             or (Config.LASTFM_SECRET and Config.LASTFM_SECRET in msg)
             or (Config.LASTFM_PASSWORD_PLAIN and Config.LASTFM_PASSWORD_PLAIN in msg)
             or (Config.SPAMWATCH_API and Config.SPAMWATCH_API in msg)
-            or (Config.RANDOM_STUFF_API_KEY and Config.RANDOM_STUFF_API_KEY in msg)
+            or (Config.SPOTIFY_CLIENT_ID and Config.SPOTIFY_CLIENT_ID in msg)
+            or (Config.SPOTIFY_CLIENT_SECRET and Config.SPOTIFY_CLIENT_SECRET in msg)
             or (Config.GITHUB_ACCESS_TOKEN and Config.GITHUB_ACCESS_TOKEN in msg)
             or (Config.DEEP_AI and Config.DEEP_AI in msg)
             or (
@@ -215,7 +215,7 @@ async def send_message(
                 comment_to=comment_to,
             )
         msglink = await client.get_msg_link(response)
-        msg = f" [الرابط]({msglink}) **: عذرًا ، لا يمكنني إرسال هذه الرسالة في الدردشات العامة ، فقد تحتوي على بعض البيانات الحساسة **"
+        msg = f"**- عذراً لا يمكنني ارسال هذه الرسالة في المجموعات العامة لانها تحتوي بيانات حساسه اقرئها في** [مجموعة التخزين]({msglink})."
         return await client.sendmessage(
             entity=chatid,
             message=msg,
@@ -368,7 +368,7 @@ async def send_file(
                 **kwargs,
             )
         msglink = await client.get_msg_link(response)
-        msg = f"[الرابط]({msglink}) **: عذرًا ، لا يمكنني إرسال هذه الرسالة في الدردشات العامة ، فقد تحتوي على بعض البيانات الحساسة **"
+        msg = f"**- عذراً لا يمكنني ارسال هذه الرسالة في المجموعات العامة لانها تحتوي بيانات حساسه اقرئها في** [مجموعة التخزين]({msglink})."
         return await client.sendmessage(
             entity=chatid,
             message=msg,
@@ -467,7 +467,7 @@ async def edit_message(
                 schedule=schedule,
             )
         msglink = await client.get_msg_link(response)
-        msg = f"[الرابط]({msglink}) **: عذرًا ، لا يمكنني إرسال هذه الرسالة في الدردشات العامة ، فقد تحتوي على بعض البيانات الحساسة **"
+        msg = f"**- عذراً لا يمكنني ارسال هذه الرسالة في المجموعات العامة لانها تحتوي بيانات حساسه اقرئها في** [مجموعة التخزين]({msglink})."
         return await client.editmessage(
             entity=chatid,
             message=message,

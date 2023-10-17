@@ -13,7 +13,7 @@ COPY requirements.txt /Installer
 
 # Installing Requirements
 RUN cd /
-RUN pip3 install -U -r Installer
+RUN pip3 install -U -r requirements.txt
 WORKDIR /root
 
 # Running MessageSearchBot

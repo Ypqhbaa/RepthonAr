@@ -9,7 +9,7 @@ RUN apt install git curl python3-pip ffmpeg -y
 RUN pip3 install -U pip
 
 # Copying Requirements
-COPY requirements.txt /Installer
+COPY requirements.txt /requirements.txt
 
 # Installing Requirements
 RUN cd /

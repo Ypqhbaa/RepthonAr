@@ -7,4 +7,5 @@ COPY . /app/
 WORKDIR /app/
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade --requirement Installer
+EXPOSE 8000
 CMD ["bash","start.sh"]

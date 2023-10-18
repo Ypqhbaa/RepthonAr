@@ -1,3 +1,4 @@
+import contextlib
 import importlib
 import sys
 from pathlib import Path
@@ -9,11 +10,10 @@ from ..core import LOADED_CMDS, PLG_INFO
 from ..core.logger import logging
 from ..core.managers import edit_delete, edit_or_reply
 from ..core.session import zedub
-from ..helpers.tools import media_type
-from ..helpers.utils import _zedtools, _zedutils, _format, install_pip, reply_id
+from ..helpers.utils import _format, _jmthonutils, install_pip, reply_id
 from .decorators import admin_cmd, sudo_cmd
 
-LOGS = logging.getLogger("𓆩𝐑𝐞𝐩𝐭𝐡𝐨𝐧𓆪")
+LOGS = logging.getLogger("𝐑𝐞𝐩𝐭𝐡𝐨𝐧")
 
 
 def load_module(shortname, plugin_path=None):
@@ -22,11 +22,11 @@ def load_module(shortname, plugin_path=None):
     elif shortname.endswith("_"):
         path = Path(f"zthon/plugins/{shortname}.py")
         checkplugins(path)
-        name = "zthon.plugins.{}".format(shortname)
+        name = f"zthon.plugins.{shortname}"
         spec = importlib.util.spec_from_file_location(name, path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
-        LOGS.info(f"تـم تثبيت ملـف {shortname}")
+        LOGS.info(f"تم تحميل ملف {shortname}")
     else:
         if plugin_path is None:
             path = Path(f"zthon/plugins/{shortname}.py")
@@ -46,9 +46,7 @@ def load_module(shortname, plugin_path=None):
         mod.CMD_HELP = CMD_HELP
         mod.reply_id = reply_id
         mod.admin_cmd = admin_cmd
-        mod._zedutils = _zedutils
-        mod._zedtools = _zedtools
-        mod.media_type = media_type
+        mod._jmthonutils = _jmthonutils
         mod.edit_delete = edit_delete
         mod.install_pip = install_pip
         mod.parse_pre = _format.parse_pre
@@ -57,8 +55,8 @@ def load_module(shortname, plugin_path=None):
         mod.borg = zedub
         spec.loader.exec_module(mod)
         # for imports
-        sys.modules[f"zthon.plugins.{shortname}"] = mod
-        LOGS.info(f"تـم تثبيت ملـف {shortname}")
+        sys.modules[f"zedub.plugins.{shortname}"] = mod
+        LOGS.info(f"تم تحميل ملف {shortname}")
 
 
 def remove_plugin(shortname):
@@ -76,14 +74,12 @@ def remove_plugin(shortname):
         return True
     except Exception as e:
         LOGS.error(e)
-    try:
+    with contextlib.suppress(BaseException):
         for i in LOAD_PLUG[shortname]:
             zedub.remove_event_handler(i)
         del LOAD_PLUG[shortname]
-    except BaseException:
-        pass
     try:
-        name = f"zthon.plugins.{shortname}"
+        name = f"zedub.plugins.{shortname}"
         for i in reversed(range(len(zedub._event_builders))):
             ev, cb = zedub._event_builders[i]
             if cb.__module__ == name:

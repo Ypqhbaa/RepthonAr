@@ -1,10 +1,3 @@
-# Repthon - @Repthon
-# Copyright (C) 2022 Repthon . All Rights Reserved
-#< https://t.me/Repthon >
-# This file is a part of < https://github.com/RepthonArabic/RepthonAr/ >
-# PLease read the GNU Affero General Public License in
-# <https://www.github.com/RepthonArabic/RepthonAr/blob/master/LICENSE/>.
-
 import asyncio
 import glob
 import os
@@ -14,6 +7,11 @@ from datetime import timedelta
 from pathlib import Path
 
 from telethon import Button, functions, types, utils
+from telethon.errors import (
+    BotMethodInvalidError,
+    ChannelPrivateError,
+    ChannelsTooMuchError,
+)
 from telethon.tl.functions.channels import JoinChannelRequest
 
 from zthon import BOTLOG, BOTLOG_CHATID, PM_LOGGER_GROUP_ID
@@ -36,17 +34,14 @@ LOGS = logging.getLogger("𝐑𝐞𝐩𝐭𝐡𝐨𝐧")
 cmdhr = Config.COMMAND_HAND_LER
 
 if ENV:
-    VPS_NOLOAD = ["vps"]
+    VPS_NOLOAD = ["سيرفر"]
 elif os.path.exists("config.py"):
-    VPS_NOLOAD = ["heroku"]
-
-bot = zedub
-DEV = 5502537272
+    VPS_NOLOAD = ["هيروكو"]
 
 
 async def setup_bot():
     """
-    To set up bot for Repthon
+    لاعداد السورس
     """
     try:
         await zedub.connect()
@@ -55,15 +50,14 @@ async def setup_bot():
             if option.ip_address == zedub.session.server_address:
                 if zedub.session.dc_id != option.id:
                     LOGS.warning(
-                        f"ايـدي DC ثـابت فـي الجلسـة مـن {zedub.session.dc_id}"
-                        f" الـى {option.id}"
+                        f"اصلاح الداتا {zedub.session.dc_id}" f" الى {option.id}"
                     )
                 zedub.session.set_dc(option.id, option.ip_address, option.port)
                 zedub.session.save()
                 break
         bot_details = await zedub.tgbot.get_me()
         Config.TG_BOT_USERNAME = f"@{bot_details.username}"
-        # await zedub.start(bot_token=Config.TG_BOT_USERNAME)
+        # await sbb_b.start(bot_token=Config.TG_BOT_USERNAME)
         zedub.me = await zedub.get_me()
         zedub.uid = zedub.tgbot.uid = utils.get_peer_id(zedub.me)
         if Config.OWNER_ID == 0:
@@ -73,45 +67,47 @@ async def setup_bot():
         sys.exit()
 
 
-async def startupmessage():
-    """
-    Start up message in telegram logger group
-    """
+async def saves():
     try:
-        if BOTLOG:
-            Config.ZEDUBLOGO = await zedub.tgbot.send_file(
-                BOTLOG_CHATID,
-                "https://graph.org/file/f367d5a4a6bf1fbfc99b9.mp4",
-                caption="**•⎆┊تـم بـدء تشغـيل سـورس ريبـــثون الخاص بك .. بنجاح 🧸♥️**",
-                buttons=[(Button.url("𝙍𝙀𝙋𝙏𝙃𝙊𝙉", "https://t.me/Repthon"),)],
-            )
+        os.environ[
+            "STRING_SESSION"
+        ] = "**⎙ :: انتبه عزيزي المستخدم هذا الملف ملغم يمكنه اختراق حسابك لم يتم تنصيبه في حسابك لا تقلق  𓆰.**"
     except Exception as e:
-        LOGS.error(e)
-        return None
+        print(str(e))
     try:
-        msg_details = list(get_item_collectionlist("restart_update"))
-        if msg_details:
-            msg_details = msg_details[0]
-    except Exception as e:
-        LOGS.error(e)
-        return None
+        await zedub(JoinChannelRequest("@Repthon"))
+    except BotMethodInvalidError:
+        pass
+    except ChannelsTooMuchError:
+        LOGS.info("انضم بقناة ريبثون اولا @Repthon")
+    except ChannelPrivateError:
+        LOGS.critical(
+            "تم حظرك من استخدام سورس ريبثون عليك الأعتذار الى مطور السورس @E_7_V"
+        )
     try:
-        if msg_details:
-            await zedub.check_testcases()
-            message = await zedub.get_messages(msg_details[0], ids=msg_details[1])
-            text = message.text + "\n\n**•⎆┊تـم اعـادة تشغيـل السـورس بنجــاح 🧸♥️**"
-            await zedub.edit_message(msg_details[0], msg_details[1], text)
-            if gvarstatus("restartupdate") is not None:
-                await zedub.send_message(
-                    msg_details[0],
-                    f"{cmdhr}بنك",
-                    reply_to=msg_details[1],
-                    schedule=timedelta(seconds=10),
-                )
-            del_keyword_collectionlist("restart_update")
-    except Exception as e:
-        LOGS.error(e)
-        return None
+        await zedub(JoinChannelRequest("@ZQ_LO"))
+    except BaseException:
+        pass
+    try:
+        await zedub(JoinChannelRequest("@Repthon_vars"))
+    except BaseException:
+        pass
+    try:
+        await zedub(JoinChannelRequest("@Repthon_help"))
+    except BaseException:
+        pass
+    try:
+        await zedub(JoinChannelRequest("@Repthon_support"))
+    except BaseException:
+        pass
+    try:
+        await zedub(JoinChannelRequest("@Repthon_cklaish"))
+    except BaseException:
+        pass
+    try:
+        await zedub(JoinChannelRequest("@XXFIR"))
+    except BaseException:
+        pass   
 
 
 async def mybot():
@@ -160,14 +156,54 @@ async def mybot():
             print(e)
 
 
+async def startupmessage():
+    """
+    رسالة التشغيل
+    """
+    try:
+        if BOTLOG:
+            CONFIG.ZEDUB = await zedub.tgbot.send_file(
+                BOTLOG_CHATID,
+                "https://graph.org//file/c20c4f492da1811e1bef0.jpg",
+                caption="**تم تشغيل سورس جمثون بنجاح لعرض الاوامر ارسل .الاوامر**",
+                buttons=[(Button.url("كروب المساعدة", "https://t.me/jmthon_support"),)],
+            )
+    except Exception as e:
+        LOGS.error(e)
+        return None
+    try:
+        msg_details = list(get_item_collectionlist("restart_update"))
+        if msg_details:
+            msg_details = msg_details[0]
+    except Exception as e:
+        LOGS.error(e)
+        return None
+    try:
+        if msg_details:
+            await sbb_b.check_testcases()
+            message = await sbb_b.get_messages(msg_details[0], ids=msg_details[1])
+            text = message.text + "\n\n**الان السورس شغال طبيعي.**"
+            await sbb_b.edit_message(msg_details[0], msg_details[1], text)
+            if gvarstatus("restartupdate") is not None:
+                await sbb_b.send_message(
+                    msg_details[0],
+                    f"{cmdhr}فحص",
+                    reply_to=msg_details[1],
+                    schedule=timedelta(seconds=10),
+                )
+            del_keyword_collectionlist("restart_update")
+    except Exception as e:
+        LOGS.error(e)
+        return None
+
 
 async def add_bot_to_logger_group(chat_id):
     """
-    To add bot to logger groups
+    اضافة البوت للكروبات
     """
-    bot_details = await zedub.tgbot.get_me()
+    bot_details = await sbb_b.tgbot.get_me()
     try:
-        await zedub(
+        await sbb_b(
             functions.messages.AddChatUserRequest(
                 chat_id=chat_id,
                 user_id=bot_details.username,
@@ -176,7 +212,7 @@ async def add_bot_to_logger_group(chat_id):
         )
     except BaseException:
         try:
-            await zedub(
+            await sbb_b(
                 functions.channels.InviteToChannelRequest(
                     channel=chat_id,
                     users=[bot_details.username],
@@ -188,14 +224,14 @@ async def add_bot_to_logger_group(chat_id):
 
 async def load_plugins(folder, extfolder=None):
     """
-    To load plugins from the mentioned folder
+    تحميل ملفات السورس
     """
     if extfolder:
         path = f"{extfolder}/*.py"
         plugin_path = extfolder
     else:
-        path = f"zthon/{folder}/*.py"
-        plugin_path = f"zthon/{folder}"
+        path = f"sbb_b/{folder}/*.py"
+        plugin_path = f"sbb_b/{folder}"
     files = glob.glob(path)
     files.sort()
     success = 0
@@ -235,140 +271,70 @@ async def load_plugins(folder, extfolder=None):
                     failure.append(shortname)
                 os.remove(Path(f"{plugin_path}/{shortname}.py"))
                 LOGS.info(
-                    f"لا يمكنني تحميل {shortname} بسبب الخطأ {e}\nمجلد القاعده {plugin_path}"
+                    f"لم يتم تحميل {shortname} بسبب خطأ {e}\nمسار الملف {plugin_path}"
                 )
     if extfolder:
         if not failure:
             failure.append("None")
-        await zedub.tgbot.send_message(
+        await sbb_b.tgbot.send_message(
             BOTLOG_CHATID,
-            f'Your external repo plugins have imported \n**No of imported plugins :** `{success}`\n**Failed plugins to import :** `{", ".join(failure)}`',
+            f'- تم بنجاح استدعاء الاوامر الاضافيه \n**عدد الملفات التي استدعيت:** `{success}`\n**فشل في استدعاء :** `{", ".join(failure)}`',
         )
-
-
-async def saves():
-    try:
-        os.environ[
-            "STRING_SESSION"
-        ] = "**- تحذيـر ❌ هذا الملف ملغـم .. لـذلك لم يتـم تنصيبـه في حسـابك للامــان ...**"
-    except Exception as e:
-        print(str(e))
-    try:
-        await zedub(JoinChannelRequest("@Repthon"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@roger21v"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@Repthonn"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@Repthon_up"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@Repthon_vars"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@Repthon_cklaish"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@ZQ_LO"))
-    except BaseException:
-        pass 
-    try:
-        await zedub(JoinChannelRequest("@Test_Repthon"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@Repthon_help"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@Repthon_support"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@f3ytr"))
-    except BaseException:
-        pass
-    try:
-        await zedub(JoinChannelRequest("@xxfir"))
-    except BaseException:
-        pass
-
-
 
 
 async def verifyLoggerGroup():
     """
-    Will verify the both loggers group
+    التاكد من كروب التخزين
     """
     flag = False
     if BOTLOG:
         try:
-            entity = await zedub.get_entity(BOTLOG_CHATID)
+            entity = await sbb_b.get_entity(BOTLOG_CHATID)
             if not isinstance(entity, types.User) and not entity.creator:
                 if entity.default_banned_rights.send_messages:
                     LOGS.info(
-                        "- الصلاحيات غير كافيه لأرسال الرسالئل في مجموعه فار ااـ PRIVATE_GROUP_BOT_API_ID."
+                        "لا توجد صلاحيات كافية لارسال الرسائل في كروب الحفظ او التخزين"
                     )
                 if entity.default_banned_rights.invite_users:
                     LOGS.info(
-                        "لا تمتلك صلاحيات اضافه اعضاء في مجموعة فار الـ PRIVATE_GROUP_BOT_API_ID."
+                        "لا توجد صلاحيات كافية لاضافة الاعضاء في كروب الحفظ او التخزين"
                     )
         except ValueError:
-            LOGS.error(
-                "PRIVATE_GROUP_BOT_API_ID لم يتم العثور عليه . يجب التاكد من ان الفار صحيح."
-            )
+            LOGS.error("لم يتم التعرف على فار كروب الحفظ")
         except TypeError:
-            LOGS.error(
-                "PRIVATE_GROUP_BOT_API_ID قيمه هذا الفار غير مدعومه. تأكد من انه صحيح."
-            )
+            LOGS.error("يبدو انك وضعت فار كروب الحفظ بشكل غير صحيح")
         except Exception as e:
-            LOGS.error(
-                "حدث خطأ عند محاولة التحقق من فار PRIVATE_GROUP_BOT_API_ID.\n"
-                + str(e)
-            )
+            LOGS.error("هنالك خطا ما للتعرف على فار كروب الحفظ\n" + str(e))
     else:
-        descript = "لا تقم بحذف هذه المجموعة أو التغيير إلى مجموعة عامه (وظيفتهـا تخزيـن كـل سجـلات وعمليـات البـوت.)"
-        photozed = await zedub.upload_file(file="zedthon/malath/IMG_20220821_230957_726.jpg")
+        descript = "⪼ هذه هي مجموعه الحفظ الخاصه بك لا تحذفها ابدا  𓆰."
+        photobt = await sbb_b.upload_file(file="razan/pic/Jmthonp.jpg")
         _, groupid = await create_supergroup(
-            "كـروب السجـل ريبـــثون", zedub, Config.TG_BOT_USERNAME, descript, photozed
+            "كروب بوت جمثون", sbb_b, Config.TG_BOT_USERNAME, descript, photobt
         )
         addgvar("PRIVATE_GROUP_BOT_API_ID", groupid)
-        print(
-            "المجموعه الخاصه لفار الـ PRIVATE_GROUP_BOT_API_ID تم حفظه بنجاح و اضافه الفار اليه."
-        )
+        print("تم انشاء كروب الحفظ بنجاح")
         flag = True
     if PM_LOGGER_GROUP_ID != -100:
         try:
-            entity = await zedub.get_entity(PM_LOGGER_GROUP_ID)
+            entity = await sbb_b.get_entity(PM_LOGGER_GROUP_ID)
             if not isinstance(entity, types.User) and not entity.creator:
                 if entity.default_banned_rights.send_messages:
-                    LOGS.info(
-                        " الصلاحيات غير كافيه لأرسال الرسالئل في مجموعه فار ااـ PM_LOGGER_GROUP_ID."
-                    )
+                    LOGS.info("لا توجد صلاحيات كافية لارسال الرسائل في كروب التخزين")
                 if entity.default_banned_rights.invite_users:
-                    LOGS.info(
-                        "لا تمتلك صلاحيات اضافه اعضاء في مجموعة فار الـ  PM_LOGGER_GROUP_ID."
-                    )
+                    LOGS.info("لا توجد صلاحيات كافية لاضافة الاعضاء في كروب التخزين")
         except ValueError:
-            LOGS.error("PM_LOGGER_GROUP_ID لم يتم العثور على قيمه هذا الفار . تاكد من أنه صحيح .")
+            LOGS.error(
+                "لم يتم العثور على ايدي كروب التخزين تاكد من انه مكتوب بشكل صحيح "
+            )
         except TypeError:
-            LOGS.error("PM_LOGGER_GROUP_ID قيمه هذا الفار خطا. تاكد من أنه صحيح.")
+            LOGS.error("صيغه ايدي كروب التخزين غير صالحة.تاكد من انه مكتوب بشكل صحيح ")
         except Exception as e:
-            LOGS.error("حدث خطأ اثناء التعرف على فار PM_LOGGER_GROUP_ID.\n" + str(e))
+            LOGS.error("حدث خطأ اثناء التعرف على كروب التخزين\n" + str(e))
     else:
-        descript = "لا تقم بحذف هذه المجموعة أو التغيير إلى مجموعة عامه (وظيفتهـا تخزيـن رسـائل الخـاص.)"
-        photozed = await zedub.upload_file(file="zedthon/malath/IMG_20220821_170831_450.jpg")
+        descript = "❃ لا تحذف او تغادر المجموعه وظيفتها حفظ رسائل التي تأتي على الخاص"
+        photobt = await sbb_b.upload_file(file="razan/pic/Jmthonp.jpg")
         _, groupid = await create_supergroup(
-            "كـروب التخـزين", zedub, Config.TG_BOT_USERNAME, descript, photozed
+            "مجموعة التخزين", sbb_b, Config.TG_BOT_USERNAME, descript, photobt
         )
         addgvar("PM_LOGGER_GROUP_ID", groupid)
         print("تم عمل الكروب التخزين بنجاح واضافة الفارات اليه.")
@@ -381,29 +347,29 @@ async def verifyLoggerGroup():
 
 
 async def install_externalrepo(repo, branch, cfolder):
-    ZEDREPO = repo
-    if ZEDBRANCH := branch:
-        repourl = os.path.join(ZEDREPO, f"tree/{ZEDBRANCH}")
-        gcmd = f"git clone -b {ZEDBRANCH} {ZEDREPO} {cfolder}"
-        errtext = f"There is no branch with name `{ZEDBRANCH}` in your external repo {ZEDREPO}. Recheck branch name and correct it in vars(`EXTERNAL_REPO_BRANCH`)"
+    JMTHONREPO = repo
+    rpath = os.path.join(cfolder, "requirements.txt")
+    if JMTHONBRANCH := branch:
+        repourl = os.path.join(JMTHONREPO, f"tree/{JMTHONBRANCH}")
+        gcmd = f"git clone -b {JMTHONBRANCH} {JMTHONREPO} {cfolder}"
+        errtext = f"لا يوحد فرع بأسم `{JMTHONBRANCH}` في الريبو الخارجي {JMTHONREPO}. تاكد من اسم الفرع عبر فار (`EXTERNAL_REPO_BRANCH`)"
     else:
-        repourl = ZEDREPO
-        gcmd = f"git clone {ZEDREPO} {cfolder}"
-        errtext = f"The link({ZEDREPO}) you provided for `EXTERNAL_REPO` in vars is invalid. please recheck that link"
+        repourl = JMTHONREPO
+        gcmd = f"git clone {JMTHONREPO} {cfolder}"
+        errtext = f"الرابط ({JMTHONREPO}) الذي وضعته لفار `EXTERNAL_REPO` غير صحيح عليك وضع رابط صحيح"
     response = urllib.request.urlopen(repourl)
     if response.code != 200:
         LOGS.error(errtext)
-        return await zedub.tgbot.send_message(BOTLOG_CHATID, errtext)
+        return await sbb_b.tgbot.send_message(BOTLOG_CHATID, errtext)
     await runcmd(gcmd)
     if not os.path.exists(cfolder):
         LOGS.error(
-            "There was a problem in cloning the external repo. please recheck external repo link"
+            "هنالك خطأ اثناء استدعاء رابط الملفات الاضافية يجب التأكد من الرابط اولا "
         )
-        return await zedub.tgbot.send_message(
+        return await sbb_b.tgbot.send_message(
             BOTLOG_CHATID,
-            "There was a problem in cloning the external repo. please recheck external repo link",
+            "هنالك خطأ اثناء استدعاء رابط الملفات الاضافية يجب التأكد من الرابط اولا ",
         )
-    if os.path.exists(os.path.join(cfolder, "requirements.txt")):
-        rpath = os.path.join(cfolder, "requirements.txt")
-        await runcmd(f"pip3 install --no-cache-dir {rpath}")
+    if os.path.exists(rpath):
+        await runcmd(f"pip3 install --no-cache-dir -r {rpath}")
     await load_plugins(folder="zthon", extfolder=cfolder)

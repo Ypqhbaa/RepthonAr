@@ -111,8 +111,8 @@ async def saves():
 
 
 async def mybot():
-    ROGER = bot.me.first_name
-    Narcissus = bot.uid
+    ROGER = zedub.me.first_name
+    Narcissus = zedub.uid
     ba_roger = f"[{ROGER}](tg://user?id={Narcissus})"
     f"ـ {ba_roger}"
     f"•⎆┊هــذا البــوت خــاص بـ {ba_roger} يمكـنك التواصــل معـه هـنا 🧸♥️"

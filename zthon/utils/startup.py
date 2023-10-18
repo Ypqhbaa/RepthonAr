@@ -162,11 +162,11 @@ async def startupmessage():
     """
     try:
         if BOTLOG:
-            CONFIG.ZEDUB = await zedub.tgbot.send_file(
+            Config.ZEDUBLOGO = await zedub.tgbot.send_file(
                 BOTLOG_CHATID,
-                "https://graph.org//file/c20c4f492da1811e1bef0.jpg",
-                caption="**تم تشغيل سورس جمثون بنجاح لعرض الاوامر ارسل .الاوامر**",
-                buttons=[(Button.url("كروب المساعدة", "https://t.me/jmthon_support"),)],
+                "https://graph.org/file/f367d5a4a6bf1fbfc99b9.mp4",
+                caption="**تـم تشـغـيل ســورس ريبـــثون بنجاح لعـرض الاوامـر ارسـل .الاوامر**",
+                buttons=[(Button.url("كروب المساعدة", "https://t.me/Repthon_support"),)],
             )
     except Exception as e:
         LOGS.error(e)
@@ -180,10 +180,10 @@ async def startupmessage():
         return None
     try:
         if msg_details:
-            await sbb_b.check_testcases()
-            message = await sbb_b.get_messages(msg_details[0], ids=msg_details[1])
+            await zedub.check_testcases()
+            message = await zedub.get_messages(msg_details[0], ids=msg_details[1])
             text = message.text + "\n\n**الان السورس شغال طبيعي.**"
-            await sbb_b.edit_message(msg_details[0], msg_details[1], text)
+            await zedub.edit_message(msg_details[0], msg_details[1], text)
             if gvarstatus("restartupdate") is not None:
                 await sbb_b.send_message(
                     msg_details[0],
@@ -201,9 +201,9 @@ async def add_bot_to_logger_group(chat_id):
     """
     اضافة البوت للكروبات
     """
-    bot_details = await sbb_b.tgbot.get_me()
+    bot_details = await zedub.tgbot.get_me()
     try:
-        await sbb_b(
+        await zedub(
             functions.messages.AddChatUserRequest(
                 chat_id=chat_id,
                 user_id=bot_details.username,
@@ -212,7 +212,7 @@ async def add_bot_to_logger_group(chat_id):
         )
     except BaseException:
         try:
-            await sbb_b(
+            await zedub(
                 functions.channels.InviteToChannelRequest(
                     channel=chat_id,
                     users=[bot_details.username],
@@ -230,8 +230,8 @@ async def load_plugins(folder, extfolder=None):
         path = f"{extfolder}/*.py"
         plugin_path = extfolder
     else:
-        path = f"sbb_b/{folder}/*.py"
-        plugin_path = f"sbb_b/{folder}"
+        path = f"zthon/{folder}/*.py"
+        plugin_path = f"zthon/{folder}"
     files = glob.glob(path)
     files.sort()
     success = 0
@@ -276,7 +276,7 @@ async def load_plugins(folder, extfolder=None):
     if extfolder:
         if not failure:
             failure.append("None")
-        await sbb_b.tgbot.send_message(
+        await zedub.tgbot.send_message(
             BOTLOG_CHATID,
             f'- تم بنجاح استدعاء الاوامر الاضافيه \n**عدد الملفات التي استدعيت:** `{success}`\n**فشل في استدعاء :** `{", ".join(failure)}`',
         )
@@ -289,7 +289,7 @@ async def verifyLoggerGroup():
     flag = False
     if BOTLOG:
         try:
-            entity = await sbb_b.get_entity(BOTLOG_CHATID)
+            entity = await zedub.get_entity(BOTLOG_CHATID)
             if not isinstance(entity, types.User) and not entity.creator:
                 if entity.default_banned_rights.send_messages:
                     LOGS.info(
@@ -307,16 +307,16 @@ async def verifyLoggerGroup():
             LOGS.error("هنالك خطا ما للتعرف على فار كروب الحفظ\n" + str(e))
     else:
         descript = "⪼ هذه هي مجموعه الحفظ الخاصه بك لا تحذفها ابدا  𓆰."
-        photobt = await sbb_b.upload_file(file="razan/pic/Jmthonp.jpg")
+        photobt = await zedub.upload_file(file="zedthon/ZelZal/")
         _, groupid = await create_supergroup(
-            "كروب بوت جمثون", sbb_b, Config.TG_BOT_USERNAME, descript, photobt
+            "كـروب السجـل ريبـــثون", zedub, Config.TG_BOT_USERNAME, descript, photobt
         )
         addgvar("PRIVATE_GROUP_BOT_API_ID", groupid)
         print("تم انشاء كروب الحفظ بنجاح")
         flag = True
     if PM_LOGGER_GROUP_ID != -100:
         try:
-            entity = await sbb_b.get_entity(PM_LOGGER_GROUP_ID)
+            entity = await zedub.get_entity(PM_LOGGER_GROUP_ID)
             if not isinstance(entity, types.User) and not entity.creator:
                 if entity.default_banned_rights.send_messages:
                     LOGS.info("لا توجد صلاحيات كافية لارسال الرسائل في كروب التخزين")
@@ -332,9 +332,9 @@ async def verifyLoggerGroup():
             LOGS.error("حدث خطأ اثناء التعرف على كروب التخزين\n" + str(e))
     else:
         descript = "❃ لا تحذف او تغادر المجموعه وظيفتها حفظ رسائل التي تأتي على الخاص"
-        photobt = await sbb_b.upload_file(file="razan/pic/Jmthonp.jpg")
+        photobt = await zedub.upload_file(file="razan/pic/Jmthonp.jpg")
         _, groupid = await create_supergroup(
-            "مجموعة التخزين", sbb_b, Config.TG_BOT_USERNAME, descript, photobt
+            "مجموعة التخزين", zedub, Config.TG_BOT_USERNAME, descript, photobt
         )
         addgvar("PM_LOGGER_GROUP_ID", groupid)
         print("تم عمل الكروب التخزين بنجاح واضافة الفارات اليه.")

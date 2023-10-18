@@ -185,7 +185,7 @@ async def startupmessage():
             text = message.text + "\n\n**الان السورس شغال طبيعي.**"
             await zedub.edit_message(msg_details[0], msg_details[1], text)
             if gvarstatus("restartupdate") is not None:
-                await sbb_b.send_message(
+                await zedub.send_message(
                     msg_details[0],
                     f"{cmdhr}فحص",
                     reply_to=msg_details[1],

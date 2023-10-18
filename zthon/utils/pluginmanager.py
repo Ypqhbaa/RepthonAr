@@ -10,7 +10,7 @@ from ..core import LOADED_CMDS, PLG_INFO
 from ..core.logger import logging
 from ..core.managers import edit_delete, edit_or_reply
 from ..core.session import zedub
-from ..helpers.utils import _format, _jmthonutils, install_pip, reply_id
+from ..helpers.utils import _format, _zedutils, install_pip, reply_id
 from .decorators import admin_cmd, sudo_cmd
 
 LOGS = logging.getLogger("𝐑𝐞𝐩𝐭𝐡𝐨𝐧")
@@ -22,7 +22,7 @@ def load_module(shortname, plugin_path=None):
     elif shortname.endswith("_"):
         path = Path(f"zthon/plugins/{shortname}.py")
         checkplugins(path)
-        name = f"zthon.plugins.{shortname}"
+        name = "zthon.plugins.{shortname}"
         spec = importlib.util.spec_from_file_location(name, path)
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
@@ -46,7 +46,7 @@ def load_module(shortname, plugin_path=None):
         mod.CMD_HELP = CMD_HELP
         mod.reply_id = reply_id
         mod.admin_cmd = admin_cmd
-        mod._jmthonutils = _jmthonutils
+        mod._zedutils = _zedutils
         mod.edit_delete = edit_delete
         mod.install_pip = install_pip
         mod.parse_pre = _format.parse_pre
@@ -55,7 +55,7 @@ def load_module(shortname, plugin_path=None):
         mod.borg = zedub
         spec.loader.exec_module(mod)
         # for imports
-        sys.modules[f"zedub.plugins.{shortname}"] = mod
+        sys.modules[f"zthon.plugins.{shortname}"] = mod
         LOGS.info(f"تم تحميل ملف {shortname}")
 
 
@@ -79,7 +79,7 @@ def remove_plugin(shortname):
             zedub.remove_event_handler(i)
         del LOAD_PLUG[shortname]
     try:
-        name = f"zedub.plugins.{shortname}"
+        name = f"zthon.plugins.{shortname}"
         for i in reversed(range(len(zedub._event_builders))):
             ev, cb = zedub._event_builders[i]
             if cb.__module__ == name:

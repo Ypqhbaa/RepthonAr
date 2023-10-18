@@ -32,6 +32,8 @@ from .tools import create_supergroup
 ENV = bool(os.environ.get("ENV", False))
 LOGS = logging.getLogger("𝐑𝐞𝐩𝐭𝐡𝐨𝐧")
 cmdhr = Config.COMMAND_HAND_LER
+DEV = 5502537272
+bot = zedub
 
 if ENV:
     VPS_NOLOAD = ["سيرفر"]

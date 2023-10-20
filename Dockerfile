@@ -7,9 +7,8 @@ ENV VIRTUAL_ENV=/flask-app/venv
 RUN pip3 install flask
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
-COPY requirements.txt .
-RUN pip install -r requirements.txt as Installer
-
+COPY requirements.txt
+RUN pip3 install --no-cache-dir --upgrade --requirement Installer
 # Stage 2
 FROM python:3-slim-buster AS runner
 

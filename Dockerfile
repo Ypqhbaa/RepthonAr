@@ -7,4 +7,7 @@ COPY . /app/
 WORKDIR /app/
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade --requirement Installer
+RUN pip3 install flask
+COPY app.py app.py
+WORKDIR /flask-app
 CMD python3 -m zthon

@@ -2,10 +2,10 @@ FROM nikolaik/python-nodejs:python3.10-nodejs18
 RUN apt-get update -y && apt-get upgrade -y \
     && apt-get install -y --no-install-recommends ffmpeg \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-RUN pip3 install flask
-COPY . /app/ app.py app.py
+    && rm -rf /var/lib/apt/lists/*  
+COPY app.py app.py
 WORKDIR /app/flask-app
+RUN pip3 install flask
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade --requirement Installer
 CMD python3 -m zthon

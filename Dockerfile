@@ -8,7 +8,7 @@ RUN pip3 install flask
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY requirements.txt .
-RUN pip install -r requirements.txt
+RUN pip install -r /bin/sh requirements.txt
 
 # Stage 2
 FROM python:3-slim-buster AS runner

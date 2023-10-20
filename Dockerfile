@@ -4,7 +4,7 @@ RUN apt-get update -y && apt-get upgrade -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 RUN pip3 install flask
-COPY . /app/app.py app.py
+COPY . /app/ app.py app.py
 WORKDIR /app/flask-app
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade --requirement Installer

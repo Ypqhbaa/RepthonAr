@@ -8,4 +8,4 @@ WORKDIR /app/
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade --requirement Installer
 EXPOSE 8080
-CMD ["bash","start.sh", "gunicorn", "--bind" , ":8080", "--workers", "2", "app:app"]
+CMD ["bash","start.sh", "app:app"]

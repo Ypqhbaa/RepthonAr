@@ -5,7 +5,7 @@ WORKDIR /flask-app
 RUN python3 -m venv venv
 ENV VIRTUAL_ENV=/flask-app/venv
 RUN pip3 install flask
-RUN git clone https://github.com/RepthonArabic/RepthonAr/tree/koyeb
+RUN git clone https://github.com/RepthonArabic/RepthonAr
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip3 install -r requirements.txt

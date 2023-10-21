@@ -10,7 +10,7 @@ aiofiles
 beautifulsoup4
 cfscrape
 cloudscraper
-datatime
+DateTime
 pymongo[srv]
 speechrecognition
 cowpy

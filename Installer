@@ -9,12 +9,14 @@ aiohttp
 beautifulsoup4
 cfscrape
 cloudscraper
+DataTime
 pymongo[srv]
 speechrecognition
 cowpy
 colour
 cryptg
 csvfaker
+covid
 fontTools
 emoji==1.7.0
 httpx[http2]

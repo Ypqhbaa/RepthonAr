@@ -6,6 +6,7 @@ gunicorn
 setuptools
 wheel
 aiohttp
+aiofiles
 beautifulsoup4
 cfscrape
 cloudscraper
@@ -72,6 +73,15 @@ telegraph
 tgcrypto
 tswift
 PyMuPDF
+nekos.py
+python-dotenv
+randomstuff.py
+regex
+requests
+psycopg2
+py-tgcalls
+pytube
+speedtest-cli
 validators
 vcsi
 wand
@@ -80,7 +90,6 @@ ujson
 yt_dlp==2023.7.6
 youtube-search-python
 user_agent
-nekos.py
 git+https://github.com/buddhhu/img2html.git
 git+https://github.com/alexmercerind/youtube-search-python
 git+https://github.com/cinemagoer/cinemagoer

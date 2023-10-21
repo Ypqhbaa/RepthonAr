@@ -1,6 +1,6 @@
 FROM python:3-slim-buster AS builder
 
-WORKDIR /flask-app
+WORKDIR /app/
 
 RUN python3 -m venv venv
 ENV VIRTUAL_ENV=/flask-app/venv
@@ -9,7 +9,6 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 COPY . /app/
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade requirements Installer
-
 
 
 FROM python:3-slim-buster AS runner

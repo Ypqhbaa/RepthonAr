@@ -17,5 +17,5 @@ RUN apt-get install -y nodejs
 COPY . /app/
 WORKDIR /app/
 RUN pip3 install --upgrade pip
-RUN pip3 install -U pip && pip3 install -U -r --requirements Installer
+RUN pip3 install -U pip && pip3 install -U --no-cache-dir --upgrade --requirement Installer
 CMD ["bash","start.sh"]

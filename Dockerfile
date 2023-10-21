@@ -1,4 +1,3 @@
-# Stage 1
 FROM python:3-slim-buster AS builder
 
 WORKDIR /flask-app
@@ -11,7 +10,8 @@ COPY . /app/
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade requirements Installer
 
-# Stage 2
+
+
 FROM python:3-slim-buster AS runner
 
 WORKDIR /flask-app

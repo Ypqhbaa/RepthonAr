@@ -76,7 +76,6 @@ nekos.py
 python-dotenv
 randomstuff.py
 regex
-requests
 psycopg2
 py-tgcalls
 pytube

@@ -8,7 +8,7 @@ ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY . /app/
 RUN pip3 install --upgrade pip
-RUN pip3 install --no-cache-dir --upgrade requirements Installer
+RUN pip3 install --no-cache-dir --upgrade --requirement Installer
 
 FROM python:3-slim-buster AS runner
 

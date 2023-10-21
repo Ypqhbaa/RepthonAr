@@ -8,6 +8,7 @@ ENV VIRTUAL_ENV=/flask-app/venv
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 COPY . /app/
+RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade requirements Installer
 
 # Stage 2

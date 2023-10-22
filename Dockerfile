@@ -16,6 +16,5 @@ RUN pip3 install flask
 RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade requirements Installer
 WORKDIR /app/
-
-# Running MessageSearchBot
+EXPOSE 8080
 CMD ["/bin/bash", "start.sh"]

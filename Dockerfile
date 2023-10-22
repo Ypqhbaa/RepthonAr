@@ -12,10 +12,10 @@ RUN pip3 install -U pip
 COPY . /app/
 
 # Installing Requirements
-RUN pip3 install --upgrade
+RUN pip3 install --upgrade pip
 RUN pip3 install --no-cache-dir --upgrade requirements Installer
 RUN pip3 install flask
-WORKDIR /MissPerfectURL
+WORKDIR /app/
 
 # Running MessageSearchBot
 CMD ["/bin/bash", "start.sh"]

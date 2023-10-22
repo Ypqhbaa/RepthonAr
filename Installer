@@ -1,7 +1,6 @@
 Telethon==1.25.2
 Flask==2.2.5
 cryptography
-pyminifier
 gunicorn
 setuptools
 wheel

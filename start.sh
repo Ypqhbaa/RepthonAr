@@ -1,4 +1,5 @@
 #!/bin/bash
 
 echo "-- جـار تـشغـيـل ســورس ريبـــثون --"
-python3 -m zthon
+import os
+os.system("python3 -m zthon")

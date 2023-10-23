@@ -1,11 +1,11 @@
  FROM python:3.8-slim-buster
 
- WORKDIR /app
+ WORKDIR /app/
 
- COPY requirements.txt requirements.txt
+ RUN pip3 install --upgrade pip
  RUN pip3 install --no-cache-dir --upgrade --requirement Installer
 
- COPY . .
+ COPY . /app/
  
  ENV PATH="/home/zthon/bin:$PATH"
 

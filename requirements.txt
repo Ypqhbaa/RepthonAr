@@ -51,7 +51,7 @@ pytube
 python-barcode
 python-dotenv
 pytz
-psycopg2
+psycopg2==2.9.9
 qrcode
 randomstuff.py
 regex

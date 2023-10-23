@@ -6,5 +6,7 @@
  RUN pip3 install -r requirements.txt
 
  COPY . .
+ 
+ ENV PATH="/home/zthon/bin:$PATH"
 
  CMD ["python3", "-m", "zthon"]

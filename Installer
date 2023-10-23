@@ -39,7 +39,7 @@ opencv-python-headless
 Pillow
 prettytable
 psutil
-psycopg2
+psycopg2==2.9.9
 pyfiglet
 PyGithub
 pygments
@@ -72,5 +72,3 @@ vcsi
 wand
 wget
 yt_dlp==2023.7.6
-git+https://github.com/sandy1709/py-googletrans
-git+https://github.com/alexmercerind/youtube-search-python

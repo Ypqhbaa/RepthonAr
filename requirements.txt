@@ -39,7 +39,6 @@ openai
 Pillow
 prettytable
 psutil
-psycopg2
 py-tgcalls
 pyfiglet
 PyGithub

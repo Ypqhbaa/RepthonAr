@@ -4,7 +4,6 @@
  RUN pip3 install --upgrade pip
  RUN pip3 install --no-cache-dir --upgrade --requirement Installer
  EXPOSE 8080
- ENV PATH="/home/zthon/bin:$PATH"
  COPY app.py app.py
  WORKDIR /flask-app
  CMD ["python3", "-m", "zthon"]

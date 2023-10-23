@@ -50,7 +50,7 @@ python-barcode
 pyrogram
 pyTelegramBotAPI==3.7.7
 pytuneteller
-pytgcalls
+pytgcalls==0.0.3
 pytz
 qrcode
 wget

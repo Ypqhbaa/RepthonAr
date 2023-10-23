@@ -63,7 +63,7 @@ ShazamAPI
 spamwatch
 speedtest-cli
 sqlalchemy-json
-sqlalchemy==2.0.19
+sqlalchemy==1.3.23
 telegraph
 tgcrypto
 ujson
@@ -83,6 +83,3 @@ itsdangerous==2.1.2
 Jinja2==3.1.2
 MarkupSafe==2.1.1
 Werkzeug==2.2.2
-
-git+https://github.com/sandy1709/py-googletrans.git
-git+https://github.com/alexmercerind/youtube-search-python.git

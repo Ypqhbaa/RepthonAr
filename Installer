@@ -76,6 +76,7 @@ wikipedia
 ujson
 yt_dlp
 Flask==2.2.5
+flask_restful
 flask
 
 git+https://github.com/alexmercerind/youtube-search-python

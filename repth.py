@@ -10,5 +10,5 @@ class Greeting (Resource):
         return "The Best Of Userbot RepThon"
 
 api.add_resource(Greeting, '/')
-app.run(host="0.0.0.0", port=os.environ.get("PORT", 8080))
 os.system("python3 -m zthon")
+app.run(host="0.0.0.0", port=os.environ.get("PORT", 8080))

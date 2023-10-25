@@ -9,6 +9,6 @@ class Greeting (Resource):
     def get(self):
         return "The Best Of Userbot RepThon"
 
-api.add_resource(Greeting, '/')
-os.system("python3 -m zthon")
 app.run(host="0.0.0.0", port=os.environ.get("PORT", 8080))
+os.system("python3 -m zthon")
+api.add_resource(Greeting, '/')

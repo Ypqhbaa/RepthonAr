@@ -1,5 +1,4 @@
 FROM python3.10-slim-buster
-
 RUN git clone https://github.com/Ypqhbaa/RepthonAr.git
 
 WORKDIR /root/zthon

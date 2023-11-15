@@ -12,6 +12,7 @@ import sys
 import urllib.request
 from datetime import timedelta
 from pathlib import Path
+from aiohttp import web
 
 from telethon import Button, functions, types, utils
 from telethon.tl.functions.channels import JoinChannelRequest
@@ -64,6 +65,10 @@ async def setup_bot():
         bot_details = await zedub.tgbot.get_me()
         Config.TG_BOT_USERNAME = f"@{bot_details.username}"
         # await zedub.start(bot_token=Config.TG_BOT_USERNAME)
+        app = web.AppRunner(await web_server())
+        await app.setup()
+        bind_address = "0.0.0.0"
+        await web.TCPSite(app, bind_address, Config.PORT).start()
         zedub.me = await zedub.get_me()
         zedub.uid = zedub.tgbot.uid = utils.get_peer_id(zedub.me)
         if Config.OWNER_ID == 0:

@@ -12,9 +12,8 @@ from .utils import (
     add_bot_to_logger_group,
     load_plugins,
     mybot,
-    autovars,
+    saves,
     setup_bot,
-    autoname,
     startupmessage,
     verifyLoggerGroup,
 )
@@ -31,17 +30,9 @@ except Exception as e:
     LOGS.error(f"{e}")
     sys.exit()
 
-if not Config.ALIVE_NAME:
-    try: #Code by T.me/E_7_V
-        LOGS.info("⌭ بـدء إضافة الاسـم التلقـائـي ⌭")
-        zq_lo.loop.run_until_complete(autoname())
-        LOGS.info("✓ تـم إضافة فار الاسـم .. بـنجـاح ✓")
-    except Exception as e:
-        LOGS.error(f"- {e}")    
-
 try:
     LOGS.info("يتم تفعيل وضع حمايه الحساب من الاختراق")
-    zedub.loop.create_task(autovars())
+    zedub.loop.create_task(saves())
     LOGS.info("تم تفعيل وضع حمايه الحساب من الاختراق")
 except Exception as bb:
     LOGS.error(f"- {bb}")

@@ -6,7 +6,6 @@ from zthon import BOTLOG_CHATID, PM_LOGGER_GROUP_ID
 
 from .Config import Config
 from .core.logger import logging
-from .core.server import web_server
 from .core.session import zedub
 from .utils import (
     add_bot_to_logger_group,

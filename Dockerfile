@@ -1,4 +1,4 @@
-FROM RepthonArabic/RepthonAr:slim-buster
+FROM python3.10-slim-buster
 
 RUN git clone https://github.com/RepthonArabic/Repthon.git /root/zthon
 

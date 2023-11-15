@@ -52,6 +52,7 @@ python-barcode
 python-dotenv
 pytz
 psycopg2==2.9.9
+pyrogram
 qrcode
 randomstuff.py
 regex

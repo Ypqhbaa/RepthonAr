@@ -1,4 +1,4 @@
-FROM python3.10-slim-buster
+FROM nikolaik/python-nodejs:python3.9-nodejs18
 
 WORKDIR /root/zthon
 

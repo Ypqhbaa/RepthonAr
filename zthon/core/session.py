@@ -12,7 +12,7 @@ __version__ = "2.10.6"
 loop = None
 
 if Config.STRING_SESSION:
-    session = bothseesion(Config.STRING_SESSION, LOGS))
+    session = bothseesion(Config.STRING_SESSION, LOGS)
 else:
     session = "zelzal"
 

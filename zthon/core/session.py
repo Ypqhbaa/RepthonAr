@@ -2,8 +2,8 @@ import os
 import sys
 
 from telethon.network.connection.tcpabridged import ConnectionTcpAbridged
-from telethon.sessions import StringSession
-
+from telethon.errors import AccessTokenExpiredError, AccessTokenInvalidError
+from .bothseesion import bothseesion
 from ..Config import Config
 from .client import ZedUserBotClient
 
@@ -12,7 +12,7 @@ __version__ = "2.10.6"
 loop = None
 
 if Config.STRING_SESSION:
-    session = StringSession(str(Config.STRING_SESSION))
+    session = bothseesion(Config.STRING_SESSION, LOGS))
 else:
     session = "zelzal"
 
@@ -42,3 +42,7 @@ zedub.tgbot = tgbot = ZedUserBotClient(
     auto_reconnect=True,
     connection_retries=None,
 ).start(bot_token=Config.TG_BOT_TOKEN)
+except AccessTokenExpiredError:
+    LOGS.error("توكن البوت غير صالح قم باستبداله بتوكن جديد من بوت فاذر")
+except AccessTokenInvalidError:
+    LOGS.error("توكن البوت غير صحيح قم باستبداله بتوكن جديد من بوت فاذر")

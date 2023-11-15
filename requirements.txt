@@ -53,6 +53,7 @@ pytube
 python-barcode
 python-dotenv
 pytz
+pyrogram
 qrcode
 randomstuff.py
 regex
@@ -73,11 +74,11 @@ user_agent
 validators
 vcsi
 wand
+wikipedia
 wget
 youtube-search
 yt-dlp==2023.7.6
 
 git+https://github.com/sandy1709/Telethon@beta
-git+https://github.com/goldsmith/Wikipedia
 git+https://github.com/sandy1709/py-googletrans
 git+https://github.com/alexmercerind/youtube-search-python

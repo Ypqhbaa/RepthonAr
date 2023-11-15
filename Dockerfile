@@ -1,12 +1,10 @@
-FROM nikolaik/python-nodejs:python3.9-nodejs18
-
-WORKDIR /root/zthon
-
-RUN curl -sL https://deb.nodesource.com/setup_16.x | bash -
-RUN apt-get install -y nodejs
-RUN npm i -g npm
-RUN pip3 install --no-cache-dir -r requirements.txt
-
-ENV PATH="/home/zthon/bin:$PATH"
-
-CMD ["python3","-m","zthon"]
+FROM nikolaik/python-nodejs:python3.10-nodejs18
+RUN apt-get update -y && apt-get upgrade -y \
+    && apt-get install -y --no-install-recommends ffmpeg \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
+COPY . /app/
+WORKDIR /app/
+RUN pip3 install --upgrade pip
+RUN pip3 install --no-cache-dir requirements.txt
+CMD python3 -m zthon
